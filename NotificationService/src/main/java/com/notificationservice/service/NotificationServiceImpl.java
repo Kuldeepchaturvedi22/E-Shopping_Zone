@@ -16,11 +16,12 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Value("{spring.mail.username}")
+    @Value("${spring.mail.username}")
     private String sender;
 
     SimpleMailMessage mailMessage = new SimpleMailMessage();
 
+    @Override
     public ResponseEntity<?> sendMail(NotificationDetails details) {
         mailMessage.setFrom(sender);
         mailMessage.setTo(details.getRecipient());
@@ -31,15 +32,18 @@ public class NotificationServiceImpl implements NotificationService {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> registerUser(String email) {
+    @Override
+    public ResponseEntity<?> registerUser(String email, String password) {
+        String subject = "Verify your email";
+        String body = "Dear user,\n\nUse this password below:\n" + password + "\n\n for login \n\nThank you!";
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(sender);
-        String subject="Welcome to Our Application";
-        String body="Dear user, Thank you for registering";
+        mailMessage.setTo(email);
         mailMessage.setSubject(subject);
         mailMessage.setText(body);
-        mailMessage.setTo(email);
-        javaMailSender.send(mailMessage);
-        return new ResponseEntity<>(true,HttpStatus.OK);
-    }
 
+        javaMailSender.send(mailMessage);
+        return new ResponseEntity<>("Verification email sent successfully", HttpStatus.OK);
+    }
 }

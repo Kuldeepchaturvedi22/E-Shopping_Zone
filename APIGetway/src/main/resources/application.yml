@@ -1,33 +1,42 @@
-springdoc:
-  swagger-ui:
-    urls:
-      - name: Notification Service
-        url: /notification/v3/api-docs
-      - name: User Service
-        url: /user/v3/api-docs
+server:
+  port: 8000
 
 spring:
+  application:
+    name: APIGATEWAY
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
-        - id: notification-service
-          uri: lb://NOTIFICATIONSERVICE
-          predicates:
-            - Path=/notification/**, /notification/v3/api-docs
-          filters:
-            - StripPrefix=1
-
         - id: user-service
           uri: lb://USERSERVICE
           predicates:
-            - Path=/user/**, /user/v3/api-docs
-          filters:
-            - StripPrefix=1
+            - Path=/api/users/**
 
-  application:
-    name: APIGATEWAY
+        - id: product-service
+          uri: lb://PRODUCTSERVICE
+          predicates:
+            - Path=/api/products/**
+
+        - id: cart-service
+          uri: lb://CARTSERVICE
+          predicates:
+            - Path=/api/cart/**
+
+        - id: order-service
+          uri: lb://ORDERSERVICE
+          predicates:
+            - Path=/api/orders/**
+
+        - id: notification-service
+          uri: lb://NOTIFICATIONSERVICE
+          predicates:
+            - Path=/api/notifications/**
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka/

@@ -5,5 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface NotificationService {
     public ResponseEntity<?> sendMail(NotificationDetails details);
-    public ResponseEntity<?> registerUser(String email);
+
+    public ResponseEntity<?> registerUser(String email, String password);
 }
